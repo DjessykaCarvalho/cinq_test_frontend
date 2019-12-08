@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Table, Input, Button } from 'antd';
-import { black } from 'ansi-colors';
+import _ from 'lodash';
 const { Search } = Input;
 
 const UserItemTable = ({ selected, setSelected, listUsers, history, deleteSelected, search, download }) => {
-  
+
   const columns = [
     {
       title: 'Name',
@@ -35,6 +35,25 @@ const UserItemTable = ({ selected, setSelected, listUsers, history, deleteSelect
     }
   });
 
+  function changeSelected(status, id) {
+    if (status) {
+      setSelected([...selected, id])
+    } else {
+      var items = _.remove(selected, function (n) {
+        return n === id;
+      });
+      setSelected(items)
+    }
+  }
+
+  function changeSelectedAll(status, v) {
+    if (status) {
+      setSelected(v.map(item => item.actions.id))
+    } else {
+      setSelected([])
+    }
+  }
+
   return (
     <div>
       <div style={style.header}>
@@ -43,7 +62,7 @@ const UserItemTable = ({ selected, setSelected, listUsers, history, deleteSelect
         <div><Button disabled={selected.length === 0 ? true : false} onClick={() => download()}>Download</Button></div>
         {selected.length > 0 && <div style={style.selected}>Selected {selected.length} item{selected.length > 1 ? 's' : ''}</div>}
       </div>
-      <Table rowSelection={{ onChange: (a) => setSelected(a) }} dataSource={dataSource} columns={columns} />
+      <Table rowSelection={{ onSelect: (e, v) => changeSelected(v, e.actions.id), onSelectAll: (e, v) => changeSelectedAll(e, v) }} dataSource={dataSource} columns={columns} />
     </div>
   )
 }
@@ -66,7 +85,7 @@ const style = {
   },
   selected: {
     fontSize: 16,
-    color: black,
+    color: 'black',
     alignSelf: 'center',
     marginLeft: 10,
     fontWeight: 'bold',

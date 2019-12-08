@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import users from '../../assets/users.json';
 import { withRouter } from 'react-router-dom';
 import UserItemTable from '../../components/user/UserItemTable.js';
+import UserItemCard from '../../components/user/UserItemCard.js';
 
 const Users = withRouter(({ history }) => {
   const [allListUsers, setAllListUsers] = useState([]);
@@ -26,7 +27,7 @@ const Users = withRouter(({ history }) => {
         });
         setListUsers(newUser)
         setAllListUsers(newUser)
-        history.replace() 
+        history.replace()
       } else {
         setListUsers(result[0])
         setAllListUsers(result[0])
@@ -39,9 +40,19 @@ const Users = withRouter(({ history }) => {
     if (id) {
       setListUsers(listUsers.filter(item => item.id !== id).map(item => item))
       setAllListUsers(allListUsers.filter(item => item.id !== id).map(item => item))
+      if (document.getElementById(`checkbox${id}`)) {
+        document.getElementById(`checkbox${id}`).parentElement.classList.remove("ant-checkbox-checked")
+      }
+      setSelected([])
     } else {
       setListUsers(listUsers.filter(item => !selected.includes(item.id)).map(item => item))
       setAllListUsers(allListUsers.filter(item => !selected.includes(item.id)).map(item => item))
+      selected.map(item => {
+        if (document.getElementById(`checkbox${item}`)) {
+          document.getElementById(`checkbox${item}`).parentElement.classList.remove("ant-checkbox-checked")
+        }
+      })
+      setSelected([])
     }
   }
 
@@ -59,6 +70,7 @@ const Users = withRouter(({ history }) => {
     dlAnchorElem.setAttribute("href", dataStr);
     dlAnchorElem.setAttribute("download", "users.json");
     dlAnchorElem.click();
+    setSelected([])
   }
 
   return (
@@ -66,7 +78,7 @@ const Users = withRouter(({ history }) => {
       {window.screen.width >= 1024 ?
         <UserItemTable listUsers={listUsers} selected={selected} setSelected={setSelected} history={history} deleteSelected={deleteSelected} search={search} download={download} />
         :
-        <div></div>
+        <UserItemCard listUsers={listUsers} selected={selected} setSelected={setSelected} history={history} deleteSelected={deleteSelected} search={search} download={download} />
       }
       <a id="downloadAnchorElem" style={{ display: 'none' }}></a>
     </div>
