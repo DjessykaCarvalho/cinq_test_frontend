@@ -26,6 +26,14 @@ Instale as dependências do projeto.
 yarn install
 ```
 
+## Executando
+
+Execute o comando para iniciar a aplicação.
+
+```
+yarn start
+```
+
 A aplicação será iniciada e estará rodando no navegador na porta `3000`
 
 ```
