@@ -40,7 +40,7 @@ const UserItemTable = ({ selected, setSelected, listUsers, history, deleteSelect
       setSelected([...selected, id])
     } else {
       var items = _.remove(selected, function (n) {
-        return n === id;
+        return n !== id;
       });
       setSelected(items)
     }
