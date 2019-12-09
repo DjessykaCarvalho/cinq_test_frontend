@@ -1,52 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import users from '../../assets/users.json';
+import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom';
 import UserItemTable from '../../components/user/UserItemTable.js';
 import UserItemCard from '../../components/user/UserItemCard.js';
+import { store } from '../../components/util.js';
 
-const Users = withRouter(({ history }) => {
+const Users = withRouter(({ listUsersStore, history }) => {
   const [allListUsers, setAllListUsers] = useState([]);
   const [listUsers, setListUsers] = useState([]);
   const [selected, setSelected] = useState([]);
 
-  async function getListUsers() {
-    return users
-  }
-
   useEffect(() => {
-    async function getData() {
-      let result = [await getListUsers()];
-      if (history.location.state && history.location.state.values) {
-        let data = history.location.state.values;
-        let newUser = result[0].map(item => {
-          if (item.id === data.id) {
-            item.firstName = data.firstName;
-            item.lastName = data.lastName;
-          }
-          return item
-        });
-        setListUsers(newUser)
-        setAllListUsers(newUser)
-        history.replace()
-      } else {
-        setListUsers(result[0])
-        setAllListUsers(result[0])
-      }
+    function getData() {
+      setListUsers(listUsersStore)
+      setAllListUsers(listUsersStore)
     }
     getData()
-  }, []);
+  }, [listUsersStore]);
 
   function deleteSelected(id) {
     if (id) {
-      setListUsers(listUsers.filter(item => item.id !== id).map(item => item))
-      setAllListUsers(allListUsers.filter(item => item.id !== id).map(item => item))
+      store.dispatch({ type: 'SET_USERS', payload: listUsersStore.filter(item => item.id !== id).map(item => item) })
       if (document.getElementById(`checkbox${id}`)) {
         document.getElementById(`checkbox${id}`).parentElement.classList.remove("ant-checkbox-checked")
       }
       setSelected([])
     } else {
-      setListUsers(listUsers.filter(item => !selected.includes(item.id)).map(item => item))
-      setAllListUsers(allListUsers.filter(item => !selected.includes(item.id)).map(item => item))
+      store.dispatch({ type: 'SET_USERS', payload: listUsersStore.filter(item => !selected.includes(item.id)).map(item => item) })
       selected.map(item => {
         if (document.getElementById(`checkbox${item}`)) {
           document.getElementById(`checkbox${item}`).parentElement.classList.remove("ant-checkbox-checked")
@@ -65,7 +45,7 @@ const Users = withRouter(({ history }) => {
   }
 
   function download() {
-    let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allListUsers.filter(item => selected.includes(item.id)).map(item => item)));
+    let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(listUsers.filter(item => selected.includes(item.id)).map(item => item)));
     var dlAnchorElem = document.getElementById('downloadAnchorElem');
     dlAnchorElem.setAttribute("href", dataStr);
     dlAnchorElem.setAttribute("download", "users.json");
@@ -91,4 +71,10 @@ const style = {
   }
 }
 
-export default Users;
+const mapStateToProps = (state) => {
+  return {
+    listUsersStore: state.users
+  }
+}
+
+export default connect(mapStateToProps, null)(Users)

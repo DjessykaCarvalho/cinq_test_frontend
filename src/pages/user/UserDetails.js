@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Form } from 'antd';
+import { Input, Button, Form, Modal } from 'antd';
+import { store } from '../../components/util';
 
 function UserDetails(props) {
   const [item, setItem] = useState({});
@@ -21,15 +22,42 @@ function UserDetails(props) {
       if (!err) {
         if (values.firstName !== item.firstName || values.lastName !== item.lastName) {
           values.id = item.id;
-          props.history.push('/', { values })
+          let listUsersStore = store.getState().users;
+          store.dispatch({
+            type: 'SET_USERS', payload: listUsersStore.map(user => {
+              if (user.id === item.id) {
+                user.firstName = values.firstName;
+                user.lastName = values.lastName;
+              }
+              return user
+            })
+          })
+          props.history.goBack()
+        }else{
+          props.history.goBack()
         }
       }
     });
   };
 
+  function cancel() {
+    if (firstName !== item.firstName || lastName !== item.lastName) {
+      Modal.confirm({
+        title: 'CONFIRMATION',
+        onOk: () => props.history.goBack(),
+        onCancel: () => { },
+        content: (
+          <div>Continue?</div>
+        ),
+      });
+    } else {
+      props.history.goBack()
+    }
+  }
+
   return (
     <div style={style.container}>
-      <Form onSubmit={handleSubmit}  >
+      <Form onSubmit={handleSubmit}>
         <div>
           <Form.Item>
             {getFieldDecorator('firstName', {
@@ -48,8 +76,7 @@ function UserDetails(props) {
             )}
           </Form.Item>
           <Form.Item>
-            <Button style={style.button} onClick={() => props.history.goBack()}>Back</Button>
-            <Button style={style.button} type="primary" onClick={() => { }}>Cancel</Button>
+            <Button style={style.button} type="primary" onClick={() => cancel()}>Cancel</Button>
             <Button style={style.button} type="primary" htmlType="submit">Save</Button>
           </Form.Item>
         </div>
