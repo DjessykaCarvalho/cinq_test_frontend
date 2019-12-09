@@ -31,6 +31,7 @@ const Users = withRouter(({ listUsersStore, history }) => {
         if (document.getElementById(`checkbox${item}`)) {
           document.getElementById(`checkbox${item}`).parentElement.classList.remove("ant-checkbox-checked")
         }
+        return item
       })
       setSelected([])
     }
@@ -50,6 +51,12 @@ const Users = withRouter(({ listUsersStore, history }) => {
     dlAnchorElem.setAttribute("href", dataStr);
     dlAnchorElem.setAttribute("download", "users.json");
     dlAnchorElem.click();
+    selected.map(item => {
+      if (document.getElementById(`checkbox${item}`)) {
+        document.getElementById(`checkbox${item}`).parentElement.classList.remove("ant-checkbox-checked")
+      }
+      return item
+    })
     setSelected([])
   }
 

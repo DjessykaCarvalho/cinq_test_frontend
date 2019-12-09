@@ -26,7 +26,7 @@ Instale as dependências do projeto.
 yarn install
 ```
 
-## Executando
+## Execução
 
 Execute o comando para iniciar a aplicação.
 

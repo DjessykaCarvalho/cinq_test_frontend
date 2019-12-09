@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Router } from "react-router-dom";
+import { createBrowserHistory } from "history";
 import Routes from './routes';
-import { browserHistory, store } from './components/util';
+import { store } from './components/util';
 import users from './assets/users.json';
 import 'antd/dist/antd.css'
 
@@ -19,7 +20,7 @@ function App() {
   })
 
   return (
-    <Router history={browserHistory}>
+    <Router history={createBrowserHistory()}>
       <Routes />
     </Router>
   );
