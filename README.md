@@ -39,3 +39,11 @@ A aplicação será iniciada e estará rodando no navegador na porta `3000`
 ```
 http://localhost:3000/
 ```
+
+## Teste
+
+Para executar o teste automatizado, execute o seguinte comando.
+
+```
+yarn test
+```
